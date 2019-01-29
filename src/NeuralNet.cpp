@@ -14,9 +14,9 @@ double(*functions[])(double inputs) = {
 	[](double input) {//relu
 		return input >= 0.0 ? input : 0.0;
 	},
-        [](double input) {//leaky relu
-            return input > 0.0 ? input : 0.01 * input;//0.01 needs to be a variable that can be changed externally...
-        },
+    [](double input) {//leaky relu
+        return input > 0.0 ? input : 0.01 * input;//0.01 needs to be a variable that can be changed externally...
+    },
 	[](double input) {//sigmoid derivative
 		return input * (1.0 - input);
 	},
@@ -26,9 +26,9 @@ double(*functions[])(double inputs) = {
 	[](double input) {//relu derivative
 		return input >= 0.0 ? 1.0 : 0.0;
 	},
-        [](double input) {//leaky relu derivative
-            return input > 0.0 ? 1.0 : 0.01;
-        }
+    [](double input) {//leaky relu derivative
+        return input > 0.0 ? 1.0 : 0.01;
+    }
 };
 
 //need to work on these randomization functions
@@ -52,7 +52,7 @@ double(*randomize[])(int numInOut) = {
 	randomSig,
 	randomTanh,
 	randomReLU,
-        randomReLU
+    randomReLU
 };
 
 NeuralNet::NeuralNet(int numInputs, int numNodesPerLayer, int numHiddenLayers, int numOutputs, double step, int function) {
