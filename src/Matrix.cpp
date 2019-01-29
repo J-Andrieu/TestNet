@@ -4,13 +4,6 @@
 #include "../includes/Matrix.h"
 #include <iostream>
 
-#pragma region Scary Extern Functions
-//that chain matrix multiplication function will go here (overload for vector or array of matrices)
-//e to the matrix, and matrix to the n will be here...
-//matrix integrations/derivation? sounds fascination and i'd love to see how it works lol
-//probably should just ask jenny what scary matrix stuff it should be able to do and then look it up lmao
-#pragma endregion
-
 #pragma region Constructors and Destructor
 template <class ItemType>
 Matrix<ItemType>::Matrix(int h, int w) {
@@ -63,7 +56,7 @@ Matrix<ItemType>::~Matrix() {
 
 #pragma region Get Set and Info Stuffs
 template <class ItemType>
-ItemType Matrix<ItemType>::get(int row, int col) {//access like a double array
+ItemType Matrix<ItemType>::get(int row, int col) {
 	return matrix[row][col];
 }
 
@@ -93,14 +86,7 @@ void Matrix<ItemType>::print() {
 	}
 }
 #pragma endregion
-//these will go in above section when written
-//check triangularity
 
-//calculate eigenvalues (will use the rref function lol)
-
-//check diagonal
-
-//check mirror
 
 #pragma region Basic Matrix Math Ops
 template <class ItemType>
@@ -151,7 +137,7 @@ Matrix<ItemType> Matrix<ItemType>::multiply(const Matrix<ItemType> &M, bool over
 }
 
 template <class ItemType>
-Matrix<ItemType>  Matrix<ItemType>::multiply(long double scalar, bool overwrite) {//need to change all double to long double for the sake for x-treme procision
+Matrix<ItemType>  Matrix<ItemType>::multiply(long double scalar, bool overwrite) {
 	if (!overwrite) {
 		Matrix<ItemType> M(height, width);
 		for (int i = 0; i < height; i++) {
@@ -219,7 +205,7 @@ Matrix<ItemType> Matrix<ItemType>::elementDivide(const Matrix<ItemType> &M2) {
 
 
 template <class ItemType>
-Matrix<ItemType> Matrix<ItemType>::add(const Matrix<ItemType> &M2, bool overwrite) {//i need to change all of my addition and such operations for matrices and complex numbers to do a constant pass by reference
+Matrix<ItemType> Matrix<ItemType>::add(const Matrix<ItemType> &M2, bool overwrite) {
 	if (M2.width != width || M2.height != height) {
 		return Matrix<ItemType>(0, 0);//there will never be an itemless matrix, therefore checking for this condition will inform something has gone wrong
 	}
@@ -241,7 +227,7 @@ Matrix<ItemType> Matrix<ItemType>::add(const Matrix<ItemType> &M2, bool overwrit
 }
 
 template <class ItemType>
-Matrix<ItemType> Matrix<ItemType>::add(long double num) {//i suppose addition is a bit more doable than multiplication >.> still need to decide if i want itemtype or scalar for things.. i mean, if a functino i need later doesn't exist i can always make it lol
+Matrix<ItemType> Matrix<ItemType>::add(long double num) {
 	Matrix<ItemType> M(height, width);
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
@@ -276,8 +262,7 @@ Matrix<ItemType> Matrix<ItemType>::subtract(long double val) {//still need to de
 	return M;
 }
 
-//use gauss-jordan ellimination for any matrix larger than 2x2? there may be a size threshold where i'd want to try to do an in-place inversion that takes longer insteead of abusing memory
-//hmmmmm should i incorporate the fact that a zero determinant means no inverse somehow.... i could use it the other way i suppose
+//use gauss-jordan elimination for any matrix larger than 2x2? there may be a size threshold where i'd want to try to do an in-place inversion that takes longer instead of abusing memory
 template <class ItemType>
 Matrix<ItemType> Matrix<ItemType>::inverse() {
 	if (height != width) {
@@ -357,7 +342,6 @@ Matrix<int> Matrix<ItemType>::identity(int h, int w) {
 	return M;
 }
 
-//LU decomposition maybe?
 
 #pragma endregion
 
@@ -405,9 +389,8 @@ Matrix<ItemType> Matrix<ItemType>::gaussJordan(bool overwrite) {
 	return this->solve(1);
 }
 
-//solve system of linear equations [A|b] where A is the matrix of equations and b is the 'vector' of solutions. returns 
+//solve system of linear equations [A|b] where A is the matrix of equations and b is the vector of solutions. returns 
 //eliminated matrix, from which values can be extrapolated
-//should add boolean argument to determine if this creates another matrix, or just augments the current matrix
 template <class ItemType>
 Matrix<ItemType> Matrix<ItemType>::solve(bool overwrite) {
 	if (!overwrite) {
@@ -435,13 +418,6 @@ Matrix<ItemType> Matrix<ItemType>::solve(bool overwrite) {
 					nonZeroExists = true;
 					if (j != pivotRow) {
 						//swap current row with pivot row
-						/*
-						for (int k = pivotColumn; k < width; k++) {
-							temp = result.matrix[j][k];
-							result.matrix[j][k] = result.matrix[pivotRow][k];
-							result.matrix[pivotRow][k] = temp;
-						}
-						*/
 						ItemType* tempPtr = matrix[pivotRow];
 						matrix[pivotRow] = matrix[j];
 						matrix[j] = tempPtr;
@@ -455,7 +431,6 @@ Matrix<ItemType> Matrix<ItemType>::solve(bool overwrite) {
 			if (!pivotFound) {
 				if (!nonZeroExists) {
 					//advance pivot column. go to start of loop
-					//row = 10, column = 10 -> row = 9, column = 10 -> restart loop with row = 10, column = 11
 					pivotRow--;
 					numPivots++;
 					continue;
@@ -467,13 +442,6 @@ Matrix<ItemType> Matrix<ItemType>::solve(bool overwrite) {
 							pivotFound = true;
 							if (j != pivotRow) {
 								//swap pivot row w/ this row
-								/*
-								for (int k = pivotColumn; k < width; k++) {
-									temp = result.matrix[j][k];
-									result.matrix[j][k] = result.matrix[pivotRow][k];
-									result.matrix[pivotRow][k] = temp;
-								}
-								*/
 								ItemType* tempPtr = matrix[pivotRow];
 								matrix[pivotRow] = matrix[j];
 								matrix[j] = tempPtr;
@@ -537,13 +505,6 @@ Matrix<ItemType> Matrix<ItemType>::solve(bool overwrite) {
 				nonZeroExists = true;
 				if (j != pivotRow) {
 					//swap current row with pivot row
-					/*
-					for (int k = pivotColumn; k < width; k++) {
-						temp = matrix[j][k];
-						matrix[j][k] = matrix[pivotRow][k];
-						matrix[pivotRow][k] = temp;
-					}
-					*/
 					ItemType* tempPtr = matrix[pivotRow];
 					matrix[pivotRow] = matrix[j];
 					matrix[j] = tempPtr;
@@ -557,7 +518,6 @@ Matrix<ItemType> Matrix<ItemType>::solve(bool overwrite) {
 		if (!pivotFound) {
 			if (!nonZeroExists) {
 				//advance pivot column. go to start of loop
-				//row = 10, column = 10 -> row = 9, column = 10 -> restart loop with row = 10, column = 11
 				pivotRow--;
 				numPivots++;
 				continue;
@@ -569,13 +529,6 @@ Matrix<ItemType> Matrix<ItemType>::solve(bool overwrite) {
 						pivotFound = true;
 						if (j != pivotRow) {
 							//swap pivot row w/ this row
-							/*
-							for (int k = pivotColumn; k < width; k++) {
-								temp = matrix[j][k];
-								matrix[j][k] = matrix[pivotRow][k];
-								matrix[pivotRow][k] = temp;
-							}
-							*/
 							ItemType* tempPtr = matrix[pivotRow];
 							matrix[pivotRow] = matrix[j];
 							matrix[j] = tempPtr;
@@ -681,13 +634,6 @@ Matrix<ItemType> Matrix<ItemType>::rowEchelon(bool overwrite) {
 						pivotFound = true;
 						if (j != pivotRow) {
 							//swap current row with pivot row
-							/*
-							for (int k = pivotColumn; k < width; k++) {
-								temp = result.matrix[j][k];
-								result.matrix[j][k] = result.matrix[pivotRow][k];
-								result.matrix[pivotRow][k] = temp;
-							}
-							*/
 							ItemType* tempPtr = matrix[pivotRow];
 							matrix[pivotRow] = matrix[j];
 							matrix[j] = tempPtr;
@@ -698,7 +644,6 @@ Matrix<ItemType> Matrix<ItemType>::rowEchelon(bool overwrite) {
 			}
 			if (!pivotFound) {
 				//advance pivot column. go to start of loop
-				//row = 10, column = 10 -> row = 9, column = 10 -> restart loop with row = 10, column = 11
 				pivotRow--;
 				continue;
 			}
@@ -738,13 +683,6 @@ Matrix<ItemType> Matrix<ItemType>::rowEchelon(bool overwrite) {
 					pivotFound = true;
 					if (j != pivotRow) {
 						//swap current row with pivot row
-						/*
-						for (int k = pivotColumn; k < width; k++) {
-							temp = matrix[j][k];
-							matrix[j][k] = matrix[pivotRow][k];
-							matrix[pivotRow][k] = temp;
-						}
-						*/
 						ItemType* tempPtr = matrix[pivotRow];
 						matrix[pivotRow] = matrix[j];
 						matrix[j] = pivotRow;
@@ -755,7 +693,6 @@ Matrix<ItemType> Matrix<ItemType>::rowEchelon(bool overwrite) {
 		}
 		if (!pivotFound) {
 			//advance pivot column. go to start of loop
-			//row = 10, column = 10 -> row = 9, column = 10 -> restart loop with row = 10, column = 11
 			pivotRow--;
 			continue;
 		}
@@ -775,33 +712,10 @@ Matrix<ItemType> Matrix<ItemType>::rowEchelon(bool overwrite) {
 #pragma endregion
 
 #pragma region Utility
-//resize
 
-//sort rows by first value position
-
-//sort rows/columns by value? i don't see how or why this could be useful, but hey, why not?
-
-//(these will be taken care of with the advent of vectors)
 #pragma endregion
 
 #pragma region Operator Overloads
 #pragma endregion
 
 #endif
-
-/*
-i could totes make a math library that deals with infinite series and stuff
-and takes derivatives/integrals and outputs what the correct function is or what
-value you get from the input value... it would def use lists or something kinda like scheme
-and then recursively construct the derivative/integral... And from what i remember, 
-matrices are fairly handy for diff eqs(?) And i could define McLaurin/Taylor and other 
-known series as well as like constant versions of infinite series subtypes of functions...
-And then i could see if there's any decent way to code in dynamic expansion to apply
-different series/functions to other equations by well... defining a bunch of different 
-equations i guess lol. which would also allow my to make a recursive function solver...
-that could also be used in conjunction with the linear system solver- have a user input 
-a few different equations, the equations solver gets them nicely in order, and then the 
-linear equation solver takes the equations as input... this only works if the equation are 
-linear tho ofc lmao... i'm sure if i put some effort into it i could deal with a quadratic, 
-etc equation solver too.  oooohhhh, and i could use sdl for graphing >:3
-*/
