@@ -277,8 +277,8 @@ Matrix<ItemType> Matrix<ItemType>::inverse() {
 		ItemType det = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
 		result.matrix[0][0] = matrix[1][1];
 		result.matrix[1][1] = matrix[0][0];
-		result.matrix[0][1] = matrix[0][1];
-		result.matrix[1][0] = matrix[1][0];
+		result.matrix[0][1] = -1 * matrix[0][1];
+		result.matrix[1][0] = -1 * matrix[1][0];
 		return result.divide(det);
 	}
 	Matrix augmented(height, height * 2);
