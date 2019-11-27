@@ -162,11 +162,13 @@ void NeuralNet::train(Matrix<double> inputs, Matrix<double> expected) {
 	weights[numWeights - 1]->add(deltas, true);
 	for (int i = numWeights - 2; i > 0; i--) {
 		error.add(weights[i]->transpose().multiply(error));
-		gradient.copy(hidden[i]->map(dActivationFunction));
+		gradient.copy(*hidden[i]);
+		gradient.map(dActivationFunction);
 		gradient.multiply(error, true);
 		gradient.multiply(learningRate, true);
 		biases[i]->add(gradient, true);
-		deltas.copy(gradient.multiply(hidden[i - 1]->transpose()));
+		Matrix temp(*hidden[i - 1]);
+		deltas.copy(gradient.multiply(temp.transpose()));
 		weights[i - 1]->add(deltas, true);
 		//weights[i - 1]->add(weights[i]->multiply(momentum), true);
 	}

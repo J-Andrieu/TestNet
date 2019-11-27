@@ -185,7 +185,7 @@ void close() {
 void independantTraining() {
     active.store(true);
     int trainingCycle = 0;
-    NeuralNet* net = new NeuralNet(numIn.load(), numNodes.load(), 1, 1, learningRate.load(), (int) activationfunc.load());
+    NeuralNet* net = new NeuralNet(numIn.load(), numNodes.load(), 2, 1, learningRate.load(), (int) activationfunc.load());
     Matrix<> input(numIn.load(), 1);
     Matrix<> output(1, 1);
     Matrix<> tinput(numIn.load(), 1);
