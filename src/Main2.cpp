@@ -285,7 +285,7 @@ void setSine() {
     networkTraining->join();
     mathfunc.store(Sine);
     numIn.store(1);
-    numNodes.store(500);
+    numNodes.store(50);
     learningRate.store(.001);
     networkTraining = new std::thread(independantTraining);
 }
@@ -295,7 +295,7 @@ void setCos() {
     networkTraining->join();
     mathfunc.store(Cosine);
     numIn.store(1);
-    numNodes.store(500);
+    numNodes.store(50);
     learningRate.store(.001);
     networkTraining = new std::thread(independantTraining);
 }
