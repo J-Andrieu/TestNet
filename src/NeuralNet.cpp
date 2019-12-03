@@ -4,8 +4,8 @@
 #include <cmath>
 #include <chrono>
 
-double(*functions[])(double inputs) = {
-	[](double input) {//sigmoid
+double(*functions[])(double inputs) = { //i can improve this by accepting void*
+	[](double input) {//sigmoid //why is sigmoid no longer learning??
 		return 1.0 / (1.0 + (double)std::exp(-1.0 * input));
 	},
 	[](double input) {//hyperbolic tangent
@@ -154,19 +154,26 @@ void NeuralNet::train(Matrix<double> inputs, Matrix<double> expected) {
 	//calculate deltas for each bias and weight
 	//rinse and repeat
 	Matrix<> error(expected.subtract(*hidden[numWeights-1]));
-	Matrix<> gradient(hidden[numWeights-1]->map(dActivationFunction));
+	Matrix<> gradient(hidden[numWeights-1]->getHeight(), hidden[numWeights - 1]->getWidth());
+  gradient.copy(*hidden[numWeights - 1]);
+  gradient.map(dActivationFunction, true);
 	gradient.multiply(error, true);
 	gradient.multiply(learningRate, true);
 	biases[numWeights - 1]->add(gradient, true);
-	Matrix<> deltas(gradient.multiply(hidden[numWeights-2]->transpose()));
+  Matrix<> temp(hidden[numWeights - 2]->getHeight(), hidden[numWeights - 2]->getWidth());
+  temp.copy(*hidden[numWeights - 2]);
+	Matrix<> deltas(gradient.multiply(temp.transpose()));
 	weights[numWeights - 1]->add(deltas, true);
 	for (int i = numWeights - 2; i > 0; i--) {
-		error.add(weights[i]->transpose().multiply(error));
-		gradient.copy(hidden[i]->map(dActivationFunction));
+    temp.copy(*weights[i]);
+		error.add(temp.transpose().multiply(error), true);
+		gradient.copy(*hidden[i]);
+    gradient.map(dActivationFunction, true);
 		gradient.multiply(error, true);
 		gradient.multiply(learningRate, true);
 		biases[i]->add(gradient, true);
-		deltas.copy(gradient.multiply(hidden[i - 1]->transpose()));
+    temp.copy(*hidden[i - 1]);
+		deltas.copy(gradient.multiply(temp.transpose()));
 		weights[i - 1]->add(deltas, true);
 		//weights[i - 1]->add(weights[i]->multiply(momentum), true);
 	}

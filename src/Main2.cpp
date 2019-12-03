@@ -16,7 +16,7 @@ bool init();
 void close();
 static void independantTraining();
 float Xor(float x, float y);
-float Sine(float x, float garbage = 0);
+float Sine(float x, float garbage = 0);//maybe i shoulda passed a void* lol
 float Cosine(float x, float garbage = 0);
 void setXor();
 Matrix<double> XorData[] = {
@@ -40,8 +40,9 @@ std::atomic<bool> active(false); //thread sets false just before returning to si
 std::atomic<float(*)(float, float) > mathfunc(Sine);
 std::atomic<NeuralNet::functionType> activationfunc = NeuralNet::tanh;
 std::atomic<int> numIn = 1;
-std::atomic<int> numNodes = 250;
-std::atomic<float> learningRate = .001;
+std::atomic<int> numNodes = 10;
+std::atomic<float> learningRate = .005;
+std::atomic<int> numLayers = 4;
 std::thread* networkTraining;
 const int FPS = 60;
 
@@ -185,7 +186,7 @@ void close() {
 void independantTraining() {
     active.store(true);
     int trainingCycle = 0;
-    NeuralNet* net = new NeuralNet(numIn.load(), numNodes.load(), 1, 1, learningRate.load(), (int) activationfunc.load());
+    NeuralNet* net = new NeuralNet(numIn.load(), numNodes.load(), numLayers.load(), 1, learningRate.load(), (int) activationfunc.load());
     Matrix<> input(numIn.load(), 1);
     Matrix<> output(1, 1);
     Matrix<> tinput(numIn.load(), 1);
@@ -275,8 +276,8 @@ void setXor() {
     networkTraining->join();
     mathfunc.store(Xor);
     numIn.store(2);
-    numNodes.store(25);
-    learningRate.store(.01);
+    numNodes.store(20);
+    numLayers.store(2);
     networkTraining = new std::thread(independantTraining);
 }
 
@@ -285,8 +286,8 @@ void setSine() {
     networkTraining->join();
     mathfunc.store(Sine);
     numIn.store(1);
-    numNodes.store(500);
-    learningRate.store(.001);
+    numNodes.store(20);
+    numLayers.store(4);
     networkTraining = new std::thread(independantTraining);
 }
 
@@ -295,8 +296,8 @@ void setCos() {
     networkTraining->join();
     mathfunc.store(Cosine);
     numIn.store(1);
-    numNodes.store(500);
-    learningRate.store(.001);
+    numNodes.store(15);
+    numLayers.store(3);
     networkTraining = new std::thread(independantTraining);
 }
 
@@ -304,6 +305,7 @@ void setTanh() {
     shutdownRequested.store(true);
     networkTraining->join();
     activationfunc.store(NeuralNet::tanh);
+    learningRate.store(0.001);
     networkTraining = new std::thread(independantTraining);
 }
 
@@ -311,6 +313,7 @@ void setReLU() {
     shutdownRequested.store(true);
     networkTraining->join();
     activationfunc.store(NeuralNet::relu);
+    learningRate.store(0.00025);
     networkTraining = new std::thread(independantTraining);
 }
 
@@ -318,6 +321,7 @@ void setSigmoid() {
     shutdownRequested.store(true);
     networkTraining->join();
     activationfunc.store(NeuralNet::sigmoid);
+    learningRate.store(.002);
     networkTraining = new std::thread(independantTraining);
 }
 
