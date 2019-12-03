@@ -155,24 +155,24 @@ void NeuralNet::train(Matrix<double> inputs, Matrix<double> expected) {
 	//rinse and repeat
 	Matrix<> error(expected.subtract(*hidden[numWeights-1]));
 	Matrix<> gradient(hidden[numWeights-1]->getHeight(), hidden[numWeights - 1]->getWidth());
-  gradient.copy(*hidden[numWeights - 1]);
-  gradient.map(dActivationFunction, true);
+  	gradient.copy(*hidden[numWeights - 1]);
+  	gradient.map(dActivationFunction, true);
 	gradient.multiply(error, true);
 	gradient.multiply(learningRate, true);
 	biases[numWeights - 1]->add(gradient, true);
-  Matrix<> temp(hidden[numWeights - 2]->getHeight(), hidden[numWeights - 2]->getWidth());
-  temp.copy(*hidden[numWeights - 2]);
+  	Matrix<> temp(hidden[numWeights - 2]->getHeight(), hidden[numWeights - 2]->getWidth());
+  	temp.copy(*hidden[numWeights - 2]);
 	Matrix<> deltas(gradient.multiply(temp.transpose()));
 	weights[numWeights - 1]->add(deltas, true);
 	for (int i = numWeights - 2; i > 0; i--) {
-    temp.copy(*weights[i]);
+    	temp.copy(*weights[i]);
 		error.add(temp.transpose().multiply(error), true);
 		gradient.copy(*hidden[i]);
-    gradient.map(dActivationFunction, true);
+    	gradient.map(dActivationFunction, true);
 		gradient.multiply(error, true);
 		gradient.multiply(learningRate, true);
 		biases[i]->add(gradient, true);
-    temp.copy(*hidden[i - 1]);
+    	temp.copy(*hidden[i - 1]);
 		deltas.copy(gradient.multiply(temp.transpose()));
 		weights[i - 1]->add(deltas, true);
 		//weights[i - 1]->add(weights[i]->multiply(momentum), true);
